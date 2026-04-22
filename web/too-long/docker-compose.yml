@@ -1,0 +1,9 @@
+services:
+  server:
+    image: orsolin/docker-php-5.3-apache:latest
+    environment:
+      - FLAG=flag{redacted}
+    ports:
+      - 10010:80
+    volumes:
+      - ./src:/var/www/html
