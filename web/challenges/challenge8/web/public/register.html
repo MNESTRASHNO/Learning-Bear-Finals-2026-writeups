@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus - Sign Up</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="card">
+      <h1>Nexus</h1>
+      <p class="subtitle">Create a new account</p>
+      <div id="error" class="error"></div>
+      <form id="form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required autocomplete="new-password">
+        </div>
+        <button type="submit">Create Account</button>
+      </form>
+      <p class="link">Already have an account? <a href="/login.html">Sign in</a></p>
+    </div>
+  </div>
+  <script>
+    fetch("/api/me").then(function(r) { if (r.ok) location.href = "/dashboard.html"; });
+
+    document.getElementById("form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      var err = document.getElementById("error");
+      err.style.display = "none";
+      var res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: document.getElementById("username").value,
+          password: document.getElementById("password").value
+        })
+      });
+      var data = await res.json();
+      if (res.ok) {
+        location.href = "/login.html";
+      } else {
+        err.textContent = data.error;
+        err.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebArchive — Site Downloader</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        .header { background: #1a1a2e; width: 100%; padding: 20px 0; text-align: center; border-bottom: 2px solid #16213e; }
+        .header h1 { font-size: 1.8rem; color: #00d4ff; }
+        .header p { color: #888; margin-top: 5px; }
+        .container { max-width: 800px; width: 90%; margin-top: 40px; }
+        form { display: flex; gap: 10px; }
+        input[type="text"] { flex: 1; padding: 12px 16px; border: 1px solid #333; border-radius: 6px; background: #1a1a1a; color: #e0e0e0; font-size: 1rem; outline: none; }
+        input[type="text"]:focus { border-color: #00d4ff; }
+        button { padding: 12px 24px; background: #00d4ff; color: #0f0f0f; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        button:hover { background: #00b8d9; }
+        .error { margin-top: 20px; padding: 12px; background: #2d1117; border: 1px solid #f85149; border-radius: 6px; color: #f85149; }
+        .result-box { margin-top: 20px; }
+        .result-meta { padding: 10px 14px; background: #1a1a2e; border-radius: 6px 6px 0 0; font-size: 0.85rem; color: #888; display: flex; justify-content: space-between; }
+        .result-meta span { color: #00d4ff; }
+        .result-content { background: #1a1a1a; border: 1px solid #333; border-top: none; border-radius: 0 0 6px 6px; padding: 16px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; font-family: 'Courier New', monospace; font-size: 0.9rem; max-height: 500px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>WebArchive</h1>
+        <p>Enter a URL to download and view its contents</p>
+    </div>
+    <div class="container">
+        <form method="POST" action="/fetch">
+            <input type="text" name="url" placeholder="https://example.com" value="{{ fetched_url or '' }}">
+            <button type="submit">Fetch</button>
+        </form>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        {% if result is not none %}
+        <div class="result-box">
+            <div class="result-meta">
+                <div>URL: <span>{{ fetched_url }}</span></div>
+                <div>Status: <span>{{ status_code }}</span></div>
+            </div>
+            <div class="result-content">{{ result }}</div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

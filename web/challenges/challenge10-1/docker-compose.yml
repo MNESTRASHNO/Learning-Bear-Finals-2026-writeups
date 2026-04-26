@@ -1,0 +1,5 @@
+services:
+  challenge10:
+    build: .
+    ports:
+      - "11110:80"

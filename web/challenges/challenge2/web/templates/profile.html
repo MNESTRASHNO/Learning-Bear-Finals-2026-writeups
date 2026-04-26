@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}{{ user.display_name }} (@{{ user.username }}){% endblock %}
+
+{% block head %}
+<style>
+    .profile-header{background:#fff;border:1px solid #dbdbdb;border-radius:8px;padding:32px;margin-bottom:20px;display:flex;gap:32px;align-items:center}
+    .profile-info{flex:1}
+    .profile-top{display:flex;align-items:center;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+    .profile-top h1{font-size:22px;font-weight:400}
+    .profile-stats{display:flex;gap:28px;margin-bottom:12px}
+    .profile-stats .stat{font-size:14px}
+    .profile-stats .stat strong{font-weight:700}
+    .profile-bio{font-size:14px;line-height:1.5}
+    .profile-bio .name{font-weight:600}
+    .post{background:#fff;border:1px solid #dbdbdb;border-radius:8px;margin-bottom:16px}
+    .post-body{padding:16px;font-size:14px;line-height:1.5}
+    .post-footer{padding:8px 16px 12px;display:flex;gap:16px;align-items:center;border-top:1px solid #efefef}
+    .post-footer button{background:none;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:5px;color:#262626;padding:4px 0;font-family:inherit}
+    .post-footer button:hover{opacity:.6}
+    .post-footer .liked{color:#ed4956}
+    .post-footer .like-count{font-size:13px;font-weight:600}
+    .post-footer .time{margin-left:auto;font-size:11px;color:#8e8e8e}
+    .empty{text-align:center;padding:40px;color:#8e8e8e;font-size:14px}
+
+    @media (max-width: 500px) {
+        .profile-header{flex-direction:column;text-align:center;gap:16px}
+        .profile-stats{justify-content:center}
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="avatar avatar-xl" style="{% if user.avatar %}background:none{% endif %}">
+        {% if user.avatar %}<img src="{{ user.avatar }}" alt="">{% else %}{{ user.username[0]|upper }}{% endif %}
+    </div>
+    <div class="profile-info">
+        <div class="profile-top">
+            <h1>{{ user.username }}</h1>
+            {% if user.id == current_user.id %}
+            <a href="/settings" class="btn btn-secondary btn-sm">Edit Profile</a>
+            {% else %}
+            <button class="btn btn-sm {% if is_following %}btn-secondary{% else %}btn-primary{% endif %}" id="followBtn" onclick="toggleFollow({{ user.id }})">
+                {{ "Following" if is_following else "Follow" }}
+            </button>
+            {% endif %}
+        </div>
+        <div class="profile-stats">
+            <div class="stat"><strong>{{ stats.posts }}</strong> posts</div>
+            <div class="stat"><strong id="followerCount">{{ stats.followers }}</strong> followers</div>
+            <div class="stat"><strong>{{ stats.following }}</strong> following</div>
+        </div>
+        <div class="profile-bio">
+            <div class="name">{{ user.display_name }}</div>
+            {% if user.bio %}
+            <p class="mt-8">{{ user.bio }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if posts %}
+{% for post in posts %}
+<div class="post" id="post-{{ post.id }}">
+    <div class="post-body">{{ post.content }}</div>
+    <div class="post-footer">
+        <button onclick="toggleLike({{ post.id }}, this)" class="{% if post.liked %}liked{% endif %}">
+            {% if post.liked %}&#9829;{% else %}&#9825;{% endif %}
+            <span class="like-count">{{ post.like_count }}</span>
+        </button>
+        <span class="time">{{ post.created_at|timeago }}</span>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="card empty">No posts yet.</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleFollow(userId) {
+    fetch('/api/follow/' + userId, {method: 'POST'})
+        .then(r => r.json())
+        .then(data => {
+            var btn = document.getElementById('followBtn');
+            btn.textContent = data.following ? 'Following' : 'Follow';
+            btn.className = 'btn btn-sm ' + (data.following ? 'btn-secondary' : 'btn-primary');
+            document.getElementById('followerCount').textContent = data.count;
+        });
+}
+
+function toggleLike(postId, btn) {
+    fetch('/api/like/' + postId, {method: 'POST'})
+        .then(r => r.json())
+        .then(data => {
+            btn.className = data.liked ? 'liked' : '';
+            btn.innerHTML = (data.liked ? '&#9829; ' : '&#9825; ') + '<span class="like-count">' + data.count + '</span>';
+        });
+}
+</script>
+{% endblock %}

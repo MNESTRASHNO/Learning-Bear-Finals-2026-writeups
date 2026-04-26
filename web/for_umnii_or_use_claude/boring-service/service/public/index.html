@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - Modern Note Taking App</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(214.3 31.8% 91.4%)",
+                        input: "hsl(214.3 31.8% 91.4%)",
+                        ring: "hsl(222.2 84% 4.9%)",
+                        background: "hsl(0 0% 100%)",
+                        foreground: "hsl(222.2 84% 4.9%)",
+                        primary: {
+                            DEFAULT: "hsl(222.2 47.4% 11.2%)",
+                            foreground: "hsl(210 40% 98%)",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(210 40% 96.1%)",
+                            foreground: "hsl(222.2 47.4% 11.2%)",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(210 40% 96.1%)",
+                            foreground: "hsl(215.4 16.3% 46.9%)",
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    
+    <!-- Auth Screen -->
+    <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full space-y-8 fade-in">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mb-4">
+                    <i data-lucide="notebook-pen" class="w-8 h-8 text-white"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900">Welcome to Notes</h2>
+                <p class="mt-2 text-gray-600">Your personal note-taking companion</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+                <!-- Tab Navigation -->
+                <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
+                    <button id="loginTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all bg-white text-gray-900 shadow-sm">
+                        Login
+                    </button>
+                    <button id="registerTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-900">
+                        Register
+                    </button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                        <input type="text" id="loginUsername" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            placeholder="Enter your username">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="loginPassword" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-medium">
+                        Sign In
+                    </button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                        <input type="text" id="registerUsername" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            placeholder="Choose a username">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="registerPassword" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            placeholder="Choose a password">
+                    </div>
+                    <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-medium">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div id="authError" class="hidden p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main App Screen -->
+    <div id="appScreen" class="hidden">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="notebook-pen" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">Notes</h1>
+                            <p class="text-xs text-gray-500" id="userInfo">Welcome back!</p>
+                        </div>
+                    </div>
+                    <button id="logoutBtn" class="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-all">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="text-sm font-medium">Logout</span>
+                    </button>
+                </div>
+                
+                <!-- Navigation Tabs -->
+                <div class="flex border-t border-gray-200">
+                    <button id="notesPageTab" class="flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 border-purple-600 text-purple-600 transition-all">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Notes</span>
+                    </button>
+                    <button id="imagesPageTab" class="flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-all">
+                        <i data-lucide="image" class="w-4 h-4"></i>
+                        <span>Images</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Notes Page -->
+            <div id="notesPage">
+                <!-- Create Note Section -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8 fade-in">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="plus-circle" class="w-5 h-5 mr-2 text-purple-600"></i>
+                        Create New Note
+                    </h2>
+                    <form id="createNoteForm" class="space-y-4">
+                        <div>
+                            <input type="text" id="noteTitle" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                placeholder="Note title...">
+                        </div>
+                        <div>
+                            <textarea id="noteContent" required rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none"
+                                placeholder="What's on your mind?"></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary text-white px-6 py-2.5 rounded-lg font-medium inline-flex items-center space-x-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Add Note</span>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Notes Grid -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                        <i data-lucide="folder" class="w-6 h-6 mr-2 text-purple-600"></i>
+                        My Notes
+                    </h2>
+                    <div id="notesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Notes will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-16 hidden">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                        <i data-lucide="file-text" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No notes yet</h3>
+                    <p class="text-gray-500">Create your first note to get started!</p>
+                </div>
+            </div>
+            
+            <!-- Images Page -->
+            <div id="imagesPage" class="hidden">
+                <!-- Upload Image Section -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8 fade-in">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="image-plus" class="w-5 h-5 mr-2 text-purple-600"></i>
+                        Upload Image
+                    </h2>
+                    
+                    <!-- Upload Method Tabs -->
+                    <div class="flex space-x-2 bg-gray-100 rounded-lg p-1 mb-4">
+                        <button id="fileUploadTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all bg-white text-gray-900 shadow-sm">
+                            From File
+                        </button>
+                        <button id="urlUploadTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-900">
+                            From URL
+                        </button>
+                    </div>
+                    
+                    <!-- File Upload Form -->
+                    <form id="uploadImageForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose an image</label>
+                            <div class="flex items-center space-x-4">
+                                <input type="file" id="imageFile" accept="image/*" required
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition-all">
+                            </div>
+                            <div id="imagePreview" class="mt-4 hidden">
+                                <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                                <img id="previewImg" src="" alt="Preview" class="max-w-xs max-h-64 rounded-lg border border-gray-200">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary text-white px-6 py-2.5 rounded-lg font-medium inline-flex items-center space-x-2">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span>Upload Image</span>
+                        </button>
+                    </form>
+                    
+                    <!-- URL Upload Form -->
+                    <form id="uploadImageFromUrlForm" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                            <input type="url" id="imageUrl" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                placeholder="https://example.com/image.jpg">
+                            <p class="mt-1 text-xs text-gray-500">Enter the direct URL to an image</p>
+                        </div>
+                        <button type="submit" class="btn-primary text-white px-6 py-2.5 rounded-lg font-medium inline-flex items-center space-x-2">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>Download & Upload</span>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Images Gallery -->
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                        <i data-lucide="images" class="w-6 h-6 mr-2 text-purple-600"></i>
+                        My Images
+                    </h2>
+                    <div id="imagesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Images will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Empty Images State -->
+                <div id="emptyImagesState" class="text-center py-16 hidden">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                        <i data-lucide="image" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No images yet</h3>
+                    <p class="text-gray-500">Upload your first image to get started!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Edit Note Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-900">Edit Note</h3>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="editNoteForm" class="space-y-4">
+                <input type="hidden" id="editNoteId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <input type="text" id="editNoteTitle" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                        placeholder="Note title...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                    <textarea id="editNoteContent" required rows="6"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none"
+                        placeholder="What's on your mind?"></textarea>
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="flex-1 btn-primary text-white py-3 rounded-lg font-medium">
+                        Save Changes
+                    </button>
+                    <button type="button" id="cancelEdit" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- View Image Modal -->
+    <div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 z-50">
+        <div class="max-w-4xl w-full fade-in">
+            <div class="flex justify-end mb-4">
+                <button id="closeImageModal" class="text-white hover:text-gray-300 transition-colors">
+                    <i data-lucide="x" class="w-8 h-8"></i>
+                </button>
+            </div>
+            <div class="bg-white rounded-2xl shadow-2xl p-4">
+                <img id="modalImage" src="" alt="Full size image" class="w-full h-auto rounded-lg">
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+

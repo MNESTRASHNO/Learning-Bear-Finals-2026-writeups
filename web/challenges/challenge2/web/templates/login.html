@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Log In{% endblock %}
+{% block title_suffix %}{% endblock %}
+
+{% block head %}
+<style>
+    body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fafafa}
+    main{width:100%;max-width:350px;padding:0 16px}
+    .auth-card{background:#fff;border:1px solid #dbdbdb;border-radius:8px;padding:32px 40px;text-align:center}
+    .auth-logo{font-size:36px;font-weight:700;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:24px}
+    .auth-card .form-group input{background:#fafafa;font-size:12px;padding:10px 8px}
+    .divider{display:flex;align-items:center;gap:16px;margin:20px 0;color:#8e8e8e;font-size:13px;font-weight:600}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#dbdbdb}
+    .auth-footer{background:#fff;border:1px solid #dbdbdb;border-radius:8px;padding:20px;text-align:center;margin-top:12px;font-size:14px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <div class="auth-logo">Pixelgram</div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="flash flash-{{ category }}" style="margin-bottom:16px;text-align:left">{{ message }}</div>
+    {% endfor %}
+    {% endwith %}
+    <form method="POST" action="/login">
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:10px">Log In</button>
+    </form>
+    <div class="divider">OR</div>
+    <p class="text-sm text-muted">Welcome back to Pixelgram</p>
+</div>
+<div class="auth-footer">
+    Don't have an account? <a href="/register">Sign up</a>
+</div>
+{% endblock %}

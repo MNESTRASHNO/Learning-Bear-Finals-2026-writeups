@@ -1,0 +1,19 @@
+services:
+  web:
+    build: ./web
+    ports:
+      - 11002:11002
+    volumes:
+      - appdata:/app/data
+      - shared:/shared
+    depends_on:
+      - internal-api
+
+  internal:
+    build: ./internal
+    volumes:
+      - shared:/shared
+
+volumes:
+  appdata:
+  shared:

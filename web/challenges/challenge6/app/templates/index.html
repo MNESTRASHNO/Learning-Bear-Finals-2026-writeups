@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Page Fetcher</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #00d4ff;
+        }
+        p.sub {
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        input[type="text"] {
+            padding: 0.75rem 1rem;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            background: #12121a;
+            color: #e0e0e0;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #00d4ff;
+        }
+        button {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            background: #00d4ff;
+            color: #0a0a0f;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #00b8d9;
+        }
+        .info {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .info ul {
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+        .info li::before {
+            content: ">";
+            color: #00d4ff;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Web Page Fetcher</h1>
+        <p class="sub">Enter a URL to fetch and display its HTML content.</p>
+        <form action="/fetch" method="post">
+            <input type="text" name="url" placeholder="https://example.com" required>
+            <button type="submit">Fetch</button>
+        </form>
+        <div class="info">
+            <strong>Security Policy</strong>
+            <ul>
+                <li>Only HTTP/HTTPS allowed</li>
+                <li>No access to internal networks</li>
+                <li>Redirects are blocked</li>
+                <li>Request timeout: 5s</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

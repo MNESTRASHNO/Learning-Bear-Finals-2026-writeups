@@ -1,0 +1,6 @@
+services:
+  challenge19:
+    build: .
+    ports:
+      - "19880:80"
+    restart: unless-stopped

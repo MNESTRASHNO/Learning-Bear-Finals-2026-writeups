@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  backend:
+    restart: always
+    build: ./backend
+  nginx:
+    build: ./nginx
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - 127.0.0.1:8002:80
+  frontend:
+    build: ./frontend
+  bot:
+    build: ./bot
+    ports:
+      - 5444:5444
+    environment:
+      - FLAG=flag{redacted}
+      - TASK_URL=https://notes.lbfinals.com/

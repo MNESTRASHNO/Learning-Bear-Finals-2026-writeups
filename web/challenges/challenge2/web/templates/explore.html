@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Explore{% endblock %}
+
+{% block head %}
+<style>
+    .explore-header{margin-bottom:20px}
+    .explore-header h2{font-size:18px;font-weight:700}
+    .explore-header p{font-size:13px;color:#8e8e8e;margin-top:4px}
+    .user-card{background:#fff;border:1px solid #dbdbdb;border-radius:8px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
+    .user-card-info{flex:1;min-width:0}
+    .user-card-info a{font-weight:600;font-size:14px;color:#262626}
+    .user-card-info a:hover{opacity:.7;text-decoration:none}
+    .user-card-info .meta{font-size:12px;color:#8e8e8e;margin-top:2px}
+    .user-card-info .bio{font-size:13px;color:#555;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="explore-header">
+    <h2>Discover People</h2>
+    <p>Find interesting people to follow on Pixelgram.</p>
+</div>
+
+{% for user in users %}
+<div class="user-card">
+    <a href="/u/{{ user.username }}">
+        <div class="avatar avatar-md" style="{% if user.avatar %}background:none{% endif %}">
+            {% if user.avatar %}<img src="{{ user.avatar }}" alt="">{% else %}{{ user.username[0]|upper }}{% endif %}
+        </div>
+    </a>
+    <div class="user-card-info">
+        <a href="/u/{{ user.username }}">{{ user.display_name }}</a>
+        <div class="meta">@{{ user.username }} · {{ user.post_count }} posts · {{ user.follower_count }} followers</div>
+        {% if user.bio %}<div class="bio">{{ user.bio }}</div>{% endif %}
+    </div>
+    <button class="btn btn-sm {% if user.is_following %}btn-secondary{% else %}btn-primary{% endif %}"
+            onclick="toggleFollow({{ user.id }}, this)">
+        {{ "Following" if user.is_following else "Follow" }}
+    </button>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleFollow(userId, btn) {
+    fetch('/api/follow/' + userId, {method: 'POST'})
+        .then(r => r.json())
+        .then(data => {
+            btn.textContent = data.following ? 'Following' : 'Follow';
+            btn.className = 'btn btn-sm ' + (data.following ? 'btn-secondary' : 'btn-primary');
+        });
+}
+</script>
+{% endblock %}

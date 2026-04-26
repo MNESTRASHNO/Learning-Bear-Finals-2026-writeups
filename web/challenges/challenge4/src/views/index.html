@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funny Translator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    .form-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #16213e;
+      color: #e0e0e0;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus { border-color: #e94560; }
+    button {
+      padding: 0.75rem 1.5rem;
+      background: #e94560;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #c73e54; }
+    button:disabled { background: #555; cursor: not-allowed; }
+    .result {
+      background: #16213e;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      min-height: 80px;
+      word-break: break-all;
+      font-size: 1.5rem;
+      line-height: 2;
+      display: none;
+    }
+    .result.error { color: #e94560; font-size: 1rem; }
+    .meta {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+    .table-toggle {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .table-toggle span {
+      color: #e94560;
+      cursor: pointer;
+      text-decoration: underline;
+      user-select: none;
+    }
+    .emoji-table {
+      display: none;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+    .emoji-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .emoji-table th, .emoji-table td {
+      border: 1px solid #2a2a4a;
+      padding: 0.3rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .emoji-table th { background: #0f3460; font-size: 0.8rem; }
+    .emoji-table td { background: #16213e; }
+    .byte-val {
+      font-size: 0.6rem;
+      color: #555;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Funny Translator</h1>
+    <p class="subtitle">Paste a URL and we'll translate its content into emojis!</p>
+
+    <form id="form">
+      <div class="form-group">
+        <input type="text" id="url" placeholder="https://example.com/hello.txt" required>
+        <button type="submit" id="btn">Translate!</button>
+      </div>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <div class="table-toggle">
+      <span id="toggle">Show Emoji Reference Table</span>
+    </div>
+    <div id="tableWrap" class="emoji-table"></div>
+  </div>
+
+  <script>
+    var form = document.getElementById('form');
+    var result = document.getElementById('result');
+    var btn = document.getElementById('btn');
+    var toggle = document.getElementById('toggle');
+    var tableWrap = document.getElementById('tableWrap');
+    var tableBuilt = false;
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var url = document.getElementById('url').value;
+      btn.disabled = true;
+      btn.textContent = 'Translating...';
+      result.style.display = 'block';
+      result.className = 'result';
+      result.textContent = 'Fetching and translating...';
+
+      fetch('/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) {
+          result.className = 'result error';
+          result.textContent = data.error;
+        } else {
+          result.className = 'result';
+          result.textContent = data.result;
+        }
+      })
+      .catch(function() {
+        result.className = 'result error';
+        result.textContent = 'Request failed';
+      })
+      .finally(function() {
+        btn.disabled = false;
+        btn.textContent = 'Translate!';
+      });
+    });
+
+    toggle.addEventListener('click', function() {
+      if (tableWrap.style.display === 'block') {
+        tableWrap.style.display = 'none';
+        toggle.textContent = 'Show Emoji Reference Table';
+        return;
+      }
+      if (!tableBuilt) {
+        fetch('/table')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var html = '<table><tr><th></th>';
+            for (var c = 0; c < 16; c++) html += '<th>x' + c.toString(16).toUpperCase() + '</th>';
+            html += '</tr>';
+            for (var r = 0; r < 16; r++) {
+              html += '<tr><th>' + r.toString(16).toUpperCase() + 'x</th>';
+              for (var c = 0; c < 16; c++) {
+                var b = r * 16 + c;
+                html += '<td>' + data[b] + '<span class="byte-val">' + b + '</span></td>';
+              }
+              html += '</tr>';
+            }
+            html += '</table>';
+            tableWrap.innerHTML = html;
+            tableBuilt = true;
+            tableWrap.style.display = 'block';
+            toggle.textContent = 'Hide Emoji Reference Table';
+          });
+      } else {
+        tableWrap.style.display = 'block';
+        toggle.textContent = 'Hide Emoji Reference Table';
+      }
+    });
+  </script>
+</body>
+</html>

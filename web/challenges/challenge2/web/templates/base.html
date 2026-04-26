@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pixelgram{% block title_suffix %} — {% block title %}{% endblock %}{% endblock %}</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#fafafa;color:#262626;min-height:100vh}
+        a{color:#00376b;text-decoration:none}
+        a:hover{text-decoration:underline}
+        nav{background:#fff;border-bottom:1px solid #dbdbdb;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:100}
+        .nav-inner{max-width:935px;width:100%;display:flex;align-items:center;justify-content:space-between}
+        .logo{font-size:22px;font-weight:700;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+        .logo:hover{text-decoration:none}
+        .nav-links{display:flex;gap:6px;align-items:center}
+        .nav-links a{color:#262626;font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;transition:background .15s;text-decoration:none}
+        .nav-links a:hover{background:#efefef;text-decoration:none}
+        .nav-links a.active{background:#262626;color:#fff}
+        .nav-user{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+        main{max-width:600px;margin:24px auto;padding:0 16px}
+        .avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#667eea,#764ba2)}
+        .avatar img{width:100%;height:100%;object-fit:cover}
+        .avatar-xs{width:24px;height:24px;font-size:10px}
+        .avatar-sm{width:32px;height:32px;font-size:13px}
+        .avatar-md{width:44px;height:44px;font-size:17px}
+        .avatar-lg{width:80px;height:80px;font-size:28px}
+        .avatar-xl{width:120px;height:120px;font-size:42px}
+        .card{background:#fff;border:1px solid #dbdbdb;border-radius:8px;overflow:hidden}
+        .btn{padding:8px 20px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+        .btn:hover{opacity:.85;text-decoration:none}
+        .btn-primary{background:#0095f6;color:#fff}
+        .btn-secondary{background:#efefef;color:#262626}
+        .btn-danger{background:#ed4956;color:#fff}
+        .btn-outline{background:transparent;border:1px solid #dbdbdb;color:#262626}
+        .btn-sm{padding:5px 12px;font-size:12px}
+        .btn:disabled{opacity:.4;cursor:not-allowed}
+        .flash{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px}
+        .flash-error{background:#fff3f3;color:#ed4956;border:1px solid #fdd}
+        .flash-success{background:#f0fff4;color:#2d8a4e;border:1px solid #cfe8d4}
+        .form-group{margin-bottom:16px}
+        .form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#8e8e8e;text-transform:uppercase;letter-spacing:.5px}
+        .form-group input,.form-group textarea{width:100%;padding:10px 12px;border:1px solid #dbdbdb;border-radius:6px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;background:#fafafa}
+        .form-group input:focus,.form-group textarea:focus{border-color:#a8a8a8;background:#fff}
+        .form-group textarea{resize:vertical;min-height:60px}
+        .text-muted{color:#8e8e8e}
+        .text-sm{font-size:13px}
+        .text-xs{font-size:11px}
+        .mt-8{margin-top:8px}
+        .mt-16{margin-top:16px}
+        .mb-16{margin-bottom:16px}
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% if current_user %}
+    <nav>
+        <div class="nav-inner">
+            <a href="/feed" class="logo">Pixelgram</a>
+            <div class="nav-links">
+                <a href="/feed" {% if request.path == '/feed' %}class="active"{% endif %}>Feed</a>
+                <a href="/following" {% if request.path == '/following' %}class="active"{% endif %}>Following</a>
+                <a href="/explore" {% if request.path == '/explore' %}class="active"{% endif %}>Explore</a>
+                <a href="/settings" {% if request.path == '/settings' %}class="active"{% endif %}>Settings</a>
+                <a href="/u/{{ current_user.username }}">
+                    <div class="avatar avatar-xs" style="{% if current_user.avatar %}background:none{% endif %}">
+                        {% if current_user.avatar %}<img src="{{ current_user.avatar }}" alt="">{% else %}{{ current_user.username[0]|upper }}{% endif %}
+                    </div>
+                </a>
+                <a href="/logout" class="text-muted">Logout</a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,8 @@
+services:
+  funny-translator:
+    build: .
+    ports:
+      - "11004:11004"
+    environment:
+      - FLAG=flag{redacted}
+    restart: unless-stopped

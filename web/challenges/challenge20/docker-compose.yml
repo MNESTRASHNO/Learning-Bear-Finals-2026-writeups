@@ -1,0 +1,5 @@
+services:
+  web:
+    build: .
+    ports:
+      - "11020:80"

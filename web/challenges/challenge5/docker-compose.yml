@@ -1,0 +1,22 @@
+services:
+  linklens:
+    build: .
+    ports:
+      - "11005:11005"
+    environment:
+      - FLAG=flag{redacted}
+      - REDIS_HOST=redis
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --save "" --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 2s
+      retries: 5
+    restart: unless-stopped

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1100" viewBox="0 0 800 1100">
+  <rect width="800" height="1100" fill="#1a1a1a"/>
+  <rect x="40" y="40" width="720" height="1020" rx="8" fill="#222" stroke="#444" stroke-width="2"/>
+  <rect x="40" y="40" width="720" height="80" rx="8" fill="#b91c1c"/>
+  <rect x="40" y="112" width="720" height="8" fill="#b91c1c" rx="0"/>
+  <text x="400" y="92" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="bold" fill="#fff">CONTENT REMOVED</text>
+  <line x1="100" y1="180" x2="700" y2="180" stroke="#333" stroke-width="1"/>
+  <text x="400" y="240" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#ef4444">DMCA Takedown Notice</text>
+  <text x="400" y="320" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#999">This content has been removed in response to a</text>
+  <text x="400" y="350" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#999">Digital Millennium Copyright Act (DMCA)</text>
+  <text x="400" y="380" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#999">takedown notice filed by the rights holder.</text>
+  <line x1="200" y1="430" x2="600" y2="430" stroke="#333" stroke-width="1"/>
+  <text x="400" y="490" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">Notice ID: DMCA-2024-MBX-00847</text>
+  <text x="400" y="520" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">Complainant: Shueisha Inc. / Kodansha Ltd.</text>
+  <text x="400" y="550" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">Date Filed: December 10, 2024</text>
+  <text x="400" y="580" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#666">Status: Enforced</text>
+  <rect x="200" y="640" width="400" height="120" rx="6" fill="#1c1c1c" stroke="#333" stroke-width="1"/>
+  <text x="400" y="680" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#777">17 U.S.C. § 512</text>
+  <text x="400" y="705" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">The Digital Millennium Copyright Act provides a</text>
+  <text x="400" y="725" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">mechanism for copyright owners to request removal</text>
+  <text x="400" y="745" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">of infringing content from online platforms.</text>
+  <text x="400" y="830" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#666">If you believe this removal was made in error,</text>
+  <text x="400" y="855" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#666">please submit a counter-notification to:</text>
+  <text x="400" y="890" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#ef4444">dmca@mangabox.local</text>
+  <text x="400" y="980" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#444">MangaBox Legal Compliance Team</text>
+  <text x="400" y="1000" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#444">© 2024 MangaBox. All rights reserved.</text>
+</svg>

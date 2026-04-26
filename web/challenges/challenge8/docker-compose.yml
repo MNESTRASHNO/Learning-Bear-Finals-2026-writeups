@@ -1,0 +1,39 @@
+services:
+  web:
+    build: ./web
+    ports:
+      - "11008:3000"
+    environment:
+      TOKEN: redacted
+      INTERNAL_URL: http://internal:5000
+      DB_HOST: postgres
+      DB_USER: app
+      DB_PASSWORD: app
+      DB_NAME: nexus
+      SESSION_SECRET: redacted
+    depends_on:
+      postgres:
+        condition: service_healthy
+      internal:
+        condition: service_started
+  internal:
+    build: ./internal
+    environment:
+      TOKEN: redacted
+      FLAG: "flag{redacted}"
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: nexus
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d nexus"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+volumes:
+  pgdata:

@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - boring-service-network
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  service:
+    build: ./service
+    networks:
+      - boring-service-network
+    ports:
+      - 10001:80
+    environment:
+      - FLAG=flag{redacted}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=postgres
+      - DOWNLOADER_URL=http://downloader:3940/download
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3939/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+  downloader:
+    build: ./downloader
+    networks:
+      - boring-service-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+
+networks:
+  boring-service-network:
+    driver: bridge

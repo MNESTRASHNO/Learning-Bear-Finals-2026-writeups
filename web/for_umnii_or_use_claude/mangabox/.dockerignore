@@ -1,0 +1,7 @@
+vendor/
+runtime/
+web/assets/*
+!web/assets/.gitkeep
+.git
+docker-compose.yml
+.dockerignore

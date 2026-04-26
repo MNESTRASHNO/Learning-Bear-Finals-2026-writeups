@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block title_suffix %}{% endblock %}
+
+{% block head %}
+<style>
+    body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fafafa}
+    main{width:100%;max-width:350px;padding:0 16px}
+    .auth-card{background:#fff;border:1px solid #dbdbdb;border-radius:8px;padding:32px 40px;text-align:center}
+    .auth-logo{font-size:36px;font-weight:700;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    .auth-subtitle{color:#8e8e8e;font-size:14px;font-weight:600;margin-bottom:20px;line-height:1.4}
+    .auth-card .form-group input{background:#fafafa;font-size:12px;padding:10px 8px}
+    .auth-footer{background:#fff;border:1px solid #dbdbdb;border-radius:8px;padding:20px;text-align:center;margin-top:12px;font-size:14px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <div class="auth-logo">Pixelgram</div>
+    <p class="auth-subtitle">Sign up to see photos and posts from your friends.</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="flash flash-{{ category }}" style="margin-bottom:16px;text-align:left">{{ message }}</div>
+    {% endfor %}
+    {% endwith %}
+    <form method="POST" action="/register">
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Email" required autocomplete="email">
+        </div>
+        <div class="form-group">
+            <input type="text" name="display_name" placeholder="Full Name" required>
+        </div>
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Username" required autocomplete="username" pattern="[a-zA-Z0-9_]{3,20}">
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required minlength="6" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:10px">Sign Up</button>
+        <p class="text-xs text-muted" style="margin-top:16px;line-height:1.5">By signing up, you agree to our Terms of Service and Privacy Policy.</p>
+    </form>
+</div>
+<div class="auth-footer">
+    Have an account? <a href="/login">Log in</a>
+</div>
+{% endblock %}

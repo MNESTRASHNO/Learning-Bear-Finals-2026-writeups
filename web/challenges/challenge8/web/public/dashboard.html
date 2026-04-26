@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus - Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="dashboard">
+    <nav class="nav">
+      <span class="nav-brand">Nexus</span>
+      <div class="nav-right">
+        <span id="user-info"></span>
+        <button class="btn-sm" id="logout-btn">Logout</button>
+      </div>
+    </nav>
+    <div class="sections">
+      <div class="card">
+        <h2>User Directory</h2>
+        <p class="description">Look up employee profiles by username</p>
+        <form id="profile-form">
+          <div class="form-group">
+            <label for="lookup">Username</label>
+            <input type="text" id="lookup" placeholder="Enter username" required>
+          </div>
+          <button type="submit">Search</button>
+        </form>
+        <pre id="profile-result" class="result"></pre>
+      </div>
+      <div class="card">
+        <h2>Content Fetcher</h2>
+        <p class="description">Retrieve content from a given URL</p>
+        <form id="fetch-form">
+          <div class="form-group">
+            <label for="fetch-url">URL</label>
+            <input type="text" id="fetch-url" placeholder="https://example.com" required>
+          </div>
+          <button type="submit">Fetch</button>
+        </form>
+        <pre id="fetch-result" class="result"></pre>
+      </div>
+    </div>
+  </div>
+  <script>
+    fetch("/api/me").then(function(r) {
+      if (!r.ok) { location.href = "/login.html"; return; }
+      return r.json();
+    }).then(function(data) {
+      if (data) document.getElementById("user-info").textContent = data.username;
+    });
+
+    document.getElementById("logout-btn").addEventListener("click", async function() {
+      await fetch("/api/logout", { method: "POST" });
+      location.href = "/login.html";
+    });
+
+    document.getElementById("profile-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      var out = document.getElementById("profile-result");
+      var username = document.getElementById("lookup").value;
+      var res = await fetch("/api/profile?username=" + encodeURIComponent(username));
+      out.textContent = await res.text();
+      out.style.display = "block";
+    });
+
+    document.getElementById("fetch-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      var out = document.getElementById("fetch-result");
+      var url = document.getElementById("fetch-url").value;
+      var res = await fetch("/api/fetch?url=" + encodeURIComponent(url));
+      out.textContent = await res.text();
+      out.style.display = "block";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+services:
+  app:
+    build: .
+    volumes:
+      - app-assets:/app/web/assets
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: mangabox
+      DB_USER: mangabox
+      DB_PASS: mangabox
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "10002:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./web:/app/web:ro
+      - app-assets:/app/web/assets:ro
+    depends_on:
+      - app
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mangabox
+      POSTGRES_USER: mangabox
+      POSTGRES_PASSWORD: mangabox
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mangabox"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+  app-assets:

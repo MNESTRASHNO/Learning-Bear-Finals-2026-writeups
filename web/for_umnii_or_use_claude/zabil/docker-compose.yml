@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "10003:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  bot:
+    build: ./bot
+    ports:
+      - "1338:1337"
+    environment:
+      - WEB_URL=http://nginx
+      - FLAG=flag{redacted}
+      - POW_COMPLEXITY=26
+    depends_on:
+      - nginx
+    restart: unless-stopped
